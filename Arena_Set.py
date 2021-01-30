@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-class Main_Design():
+class Arena_desing():
     # перегрузка параметров ширины и длины арены в клетках, координат и жы
     def __init__(self, width, height):
         self.width = width
@@ -18,7 +18,7 @@ class Main_Design():
     # описание основного дизайна
     def setupUi(self, Main_Window):
         # размеры окна
-        Main_Window.resize(int(self.side) * int(self.width) + 256, int(self.side) * (int(self.height) + 1))
+        Main_Window.setFixedSize(int(self.side) * int(self.width) + 256, int(self.side) * (int(self.height) + 1))
         # задание виджета centralwidget, на котором поместим основные штуковины
         self.centralwidget = QtWidgets.QWidget(Main_Window)
         # инициализация клеток как массива квадратов с выводом текста (textbrowser)
@@ -32,18 +32,27 @@ class Main_Design():
 
         self.food_label = QtWidgets.QLabel(self.centralwidget)
         self.food_label.setGeometry(QtCore.QRect(int(self.side) * int(self.width), 0, 206, 20))
-        self.food_intput = QtWidgets.QTextEdit(self.centralwidget)
-        self.food_intput.setGeometry(QtCore.QRect(int(self.side) * int(self.width) + 206, 0, 50, 20))  # размеры
+
+        self.food_input = QtWidgets.QSpinBox(self.centralwidget)
+        self.food_input.setGeometry(QtCore.QRect(int(self.side) * int(self.width) + 206, 0, 50, 20))  # размеры
+        self.food_input.setRange(1, self.square // 3)
+        self.food_input.setValue(self.square // 8)
 
         self.poison_label = QtWidgets.QLabel(self.centralwidget)
-        self.poison_label.setGeometry(QtCore.QRect(int(self.side) * int(self.width), 20, 256, 20))
-        self.poison_intput = QtWidgets.QTextEdit(self.centralwidget)
-        self.poison_intput.setGeometry(QtCore.QRect(int(self.side) * int(self.width) + 206, 20, 50, 20))  # размеры
+        self.poison_label.setGeometry(QtCore.QRect(int(self.side) * int(self.width), 20, 206, 20))
+
+        self.poison_input = QtWidgets.QSpinBox(self.centralwidget)
+        self.poison_input.setGeometry(QtCore.QRect(int(self.side) * int(self.width) + 206, 20, 50, 20))  # размеры
+        self.poison_input.setRange(1, self.square // 3)
+        self.poison_input.setValue(self.square // 8)
 
         self.bots_label = QtWidgets.QLabel(self.centralwidget)
-        self.bots_label.setGeometry(QtCore.QRect(int(self.side) * int(self.width), 40, 256, 20))
-        self.bots_input = QtWidgets.QTextEdit(self.centralwidget)
+        self.bots_label.setGeometry(QtCore.QRect(int(self.side) * int(self.width), 40, 206, 20))
+
+        self.bots_input = QtWidgets.QSpinBox(self.centralwidget)
         self.bots_input.setGeometry(QtCore.QRect(int(self.side) * int(self.width) + 206, 40, 50, 20))  # размеры
+        self.bots_input.setRange(1, self.square // 3)
+        self.bots_input.setValue(self.square // 8)
 
         # кнопка по генерации арены
         self.setButton = QtWidgets.QPushButton("Create arena", self.centralwidget)
@@ -58,11 +67,11 @@ class Main_Design():
     def retranslateUi(self, Main_Window):
         _translate = QtCore.QCoreApplication.translate
         Main_Window.setWindowTitle(_translate("Main_Window", "Arena"))
-        self.food_label.setText(_translate("MainWindow", str("Enter basic food amount(from 1 to "
+        self.food_label.setText(_translate("MainWindow", str(" Enter basic food amount(from 1 to "
                                                              + str(self.square // 3) + ":)")))
-        self.poison_label.setText(_translate("MainWindow", str("Enter basic poison amount(from 1 to "
+        self.poison_label.setText(_translate("MainWindow", str(" Enter basic poison amount(from 1 to "
                                                                + str(self.square // 3) + ":)")))
-        self.bots_label.setText(_translate("MainWindow", str("Enter basic bots amount(from 1 to "
+        self.bots_label.setText(_translate("MainWindow", str(" Enter basic bots amount(from 1 to "
                                                              + str(self.square // 3) + ":)")))
 
     def set_wall(self, x, y):
@@ -75,4 +84,3 @@ class Main_Design():
 
     def setfunc(self, a, b):
         self.texts[a][b].clicked.connect(lambda: self.set_wall(b, a))
-

@@ -1,4 +1,3 @@
-import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -6,7 +5,8 @@ from PyQt5.QtWidgets import *
 
 class Main_Design():
     # перегрузка параметров ширины и длины арены в клетках, координат и жы
-    def __init__(self, width, height, walls):
+    def __init__(self, root, width, height, walls):
+        self.root = root
         self.width = width
         self.height = height
         self.walls = walls
@@ -18,7 +18,7 @@ class Main_Design():
     # описание основного дизайна
     def setupUi(self, Main_Window):
         # размеры окна
-        Main_Window.resize(int(self.side) * int(self.width) + 256, int(self.side) * (int(self.height) + 2))
+        Main_Window.setFixedSize(int(self.side) * int(self.width) + 256, int(self.side) * (int(self.height) + 2))
         # задание виджета centralwidget, на котором поместим основные штуковины
         self.centralwidget = QtWidgets.QWidget(Main_Window)
         # инициализация клеток как массива квадратов с выводом текста (textbrowser)
@@ -40,10 +40,16 @@ class Main_Design():
         self.skipButton.setGeometry(QtCore.QRect(0, (self.height + 1) * self.side,
                                                  self.width * self.side, self.side))  # закрепление на нужном месте
 
+        #число пропуска поколений
+        self.skip_number = QtWidgets.QSpinBox(self.centralwidget)
+        self.skip_number.setGeometry(QtCore.QRect(self.width * self.side,
+                                                  (self.height + 1) * self.side, 256, self.side))  # размеры
+        self.skip_number.setRange(100, 10000)
+
         # вывод в окошко раличной информации(для дебага и отслежки работы)
-        self.output = QtWidgets.QTextEdit(self.centralwidget)
+        self.output = QtWidgets.QTextBrowser(self.centralwidget)
         self.output.setGeometry(QtCore.QRect(int(self.side) * int(self.width), 30, 256,
-                                             int(self.side) * int(self.height)))  # размеры
+                                             int(self.side) * int(self.height) + self.side - 30))  # размеры
 
         # ярлык для красоты
         self.label = QtWidgets.QLabel(self.centralwidget)
