@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 class Main_Design():
-    # перегрузка параметров ширины и длины арены в клетках, координат и жы
+    # перегрузка параметров ширины и длины арены в клетках, координат и стен
     def __init__(self, root, width, height, walls):
         self.root = root
         self.width = width
@@ -36,7 +36,7 @@ class Main_Design():
                                                   self.width * self.side, self.side))  # закрепление на нужном месте
 
         # кнопка по пропуску поколений
-        self.skipButton = QtWidgets.QPushButton("Skip 100 generations", self.centralwidget)  # инициализация
+        self.skipButton = QtWidgets.QPushButton("Skip n generations", self.centralwidget)  # инициализация
         self.skipButton.setGeometry(QtCore.QRect(0, (self.height + 1) * self.side,
                                                  self.width * self.side, self.side))  # закрепление на нужном месте
 
@@ -62,7 +62,6 @@ class Main_Design():
     #включение текста в виджеты
     def retranslateUi(self, Main_Window):
         _translate = QtCore.QCoreApplication.translate
-        Main_Window.setWindowTitle(_translate("Main_Window", "Arena"))
         self.label.setText(_translate("MainWindow", "    State:"))
 
     # основная функция взаимодействия с окном: изменение конфигураций клеток

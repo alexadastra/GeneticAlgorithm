@@ -90,38 +90,40 @@ class Bot:
             self.change_pointer(5)
 
     # bot_number -- номер бота в массиве bots
-    def start(self, arena, bot_number):
+    def start(self, arena):
             # если клетка памяти бота -- это "ходить"
             if self.memory[self.pointer] in self.GO:
                 # x1, y1 -- координаты, на которые надо сходить
                 x1, y1 = self.look(self.memory[self.pointer], self.view, self.x, self.y)
                 # если новые координаты находятся на арене
-                if x1 >= 0 and y1 >= 0 and x1 <= 7 and y1 <= 7:
+                if x1 >= 0 and y1 >= 0 and x1 < arena.length and y1 < arena.height:
                     # print("GO")
                     # если на координаты, куда нам нужно сходить пустота -- то ходим
                     if arena.check_coordinates(x1, y1) == '0':
                         # меняем координаты у ячейки в арене
-                        arena.move_bot(self.x, self.y, x1, y1, bot_number)
+                        arena.move_bot(self.x, self.y, x1, y1, arena.bot_number)
                         # меняем координаты в самом боте
                         self.change_coordinates(x1, y1)
                     # если еда -- то ходим и пополняем здоровье
                     elif arena.check_coordinates(x1, y1) == '2':
                         # меняем координаты у ячейки в арене
-                        arena.move_bot(self.x, self.y, x1, y1, bot_number)
+                        arena.move_bot(self.x, self.y, x1, y1, arena.bot_number)
                         # меняем координаты в самом боте
                         self.change_coordinates(x1, y1)
                         # увеличиваем здоровье
                         self.change_health(10)
-                        self.window.ColorConfiguration(1, self.x, self.y, self.health)  # <--
+                        if not arena.flag_skip:
+                            self.window.ColorConfiguration(1, self.x, self.y, self.health)  # <--
                     # если яд -- то ходим и убавляем здоровье бота
                     elif arena.check_coordinates(x1, y1) == '3':
                         # меняем координаты у ячейки в арене
-                        arena.move_bot(self.x, self.y, x1, y1, bot_number)
+                        arena.move_bot(self.x, self.y, x1, y1, arena.bot_number)
                         # меняем координаты в самом боте
                         self.change_coordinates(x1, y1)
                         # убиваем бота
                         self.change_health(-15)
-                        self.window.ColorConfiguration(1, self.x, self.y, self.health)  # <--
+                        if not arena.flag_skip:
+                            self.window.ColorConfiguration(1, self.x, self.y, self.health)
                     # если бот или стена, то не ходим
 
                     # перемещаем указатель в голове у бота
@@ -134,7 +136,7 @@ class Bot:
                 # x1, y1 -- координаты, на которые надо посмотреть и найти еду или яд
                 x1, y1 = self.look(self.memory[self.pointer], self.view, self.x, self.y)
                 # если новые координаты находятся на арене
-                if 0 <= x1 <= 7 and 0 <= y1 <= 7:
+                if 0 <= x1 < arena.length and 0 <= y1 < arena.height:
                     # print("SEIZE")
                     # если еда -- то кушаем её
                     if arena.check_coordinates(x1, y1) == '2':
@@ -142,7 +144,8 @@ class Bot:
                         arena.delete_food(x1, y1)
                         # увеличиваем здоровье бота
                         self.change_health(10)
-                        self.window.ColorConfiguration(1, self.x, self.y, self.health)  # <--
+                        if not arena.flag_skip:
+                            self.window.ColorConfiguration(1, self.x, self.y, self.health)  # <--
                     elif arena.check_coordinates(x1, y1) == '3':
                         # меняем значение у ячейки в арене
                         arena.poison_to_food(x1, y1)
@@ -159,7 +162,7 @@ class Bot:
                 # x1, y1 -- координаты, на которые надо посмотреть
                 x1, y1 = self.look(self.memory[self.pointer], self.view, self.x, self.y)
                 # если новые координаты находятся на арене
-                if x1 >= 0 and y1 >= 0 and x1 <= 7 and y1 <= 7:
+                if x1 >= 0 and y1 >= 0 and x1 < arena.length and y1 < arena.height:
                     # перемещаем указатель в голове у бота
                     # int(arena.check_coordinates(x1, y1)) -- проверяем, что находится в этой ячейке
                     self.move_pointer(int(arena.check_coordinates(x1, y1)))
@@ -187,15 +190,16 @@ class Bot:
 
             # после каждого хода уменьшаем здоровье бота на 1 еденицу
             self.health -= 1
-            self.window.ColorConfiguration(self.window, 1, self.x, self.y, self.health)
+            if not arena.flag_skip:
+                self.window.ColorConfiguration(1, self.x, self.y, self.health)
 
             # если здоровье бота меньше 1, то убиваем его
             if self.health < 1:
                 arena.flag_finish = True
-                arena.delete_bot(bot_number)
+                arena.delete_bot(arena.bot_number)
 
     # мутирование бота, n -- количество мутаций, которое надо произвести
-    def mutate_bot(self, n=1):
+    def mutate_bot(self, n):
         # значение ячейки памяти от рандомного числа от 0 до 63 меняем на рандомное число от 0 до 63 n раз
         for i in range(n):
             self.memory[randint(0, 63)] = randint(0, 63)
